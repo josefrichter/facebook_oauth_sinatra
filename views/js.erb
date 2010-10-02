@@ -1,0 +1,65 @@
+<div id="fb-root"></div>
+<script src="http://connect.facebook.net/en_US/all.js"></script>
+<script>
+  // initialize the library with the API key
+  FB.init({ apiKey: "<%= APP_CONFIG[\'api_key\'] %>", cookie: true });
+	//FB.Canvas.setAutoResize();
+	
+  // fetch the status on load
+	FB.getLoginStatus(function(response) {
+	  if (response.session) {
+	    // logged in and connected user, someone you know
+			
+			// sending message directly thru api...
+			// example taken from http://developers.facebook.com/docs/reference/javascript/FB.api
+			var body = "Reading Connect JS documentation";
+			FB.api('/<%= APP_CONFIG[\'friend_id\'] %>/feed', 'post', { body: body }, function(response) {
+			  if (!response || response.error) {
+					console.log(response.error);
+			    //alert(response.error);
+			  } else {
+			    alert('Post ID: ' + response);
+			  }
+			});
+			
+			
+			// ...or displaying a pre-filled modal window
+			// example taken from http://developers.facebook.com/docs/reference/javascript/FB.ui
+			FB.ui(
+		   {
+		     method: 'stream.publish',
+				target_id: <%= APP_CONFIG[\'friend_id\'] %>,
+		     message: 'getting educated about Facebook Connect',
+		     attachment: {
+		       name: 'Connect',
+		       caption: 'The Facebook Connect JavaScript SDK',
+		       description: (
+		         'A small JavaScript library that allows you to harness ' +
+		         'the power of Facebook, bringing the user\'s identity, ' +
+		         'social graph and distribution power to your site.'
+		       ),
+		       href: 'http://github.com/facebook/connect-js'
+		     },
+		     action_links: [
+		       { text: 'Code', href: 'http://github.com/facebook/connect-js' }
+		     ],
+		     user_message_prompt: 'Share your thoughts about Connect'
+		   },
+		   function(response) {
+		     if (response && response.post_id) {
+		       alert('Post was published.');
+		     } else {
+		       alert('Post was not published.');
+		     }
+		   }
+		 );
+			
+			
+	  } else {
+	    // no user session available, someone you dont know
+			top.location = "http://www.facebook.com/login.php?v=1.0&api_key=<%= APP_CONFIG['api_key'] %>&display=page&fbconnect=0&canvas=0&req_perms=publish_stream,user_likes" // request login permissions
+			return;
+	  }
+	});
+
+</script>
