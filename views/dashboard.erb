@@ -1,3 +1,25 @@
+<div id="fb-root"></div>
+<script src="http://connect.facebook.net/cs_CZ/all.js"></script>
+<script>
+  // initialize the library with the API key
+  FB.init({ apiKey: "<%= APP_CONFIG['api_key'] %>", cookie: false });
+	FB.Canvas.setAutoResize();
+	
+  // fetch the status on load
+	FB.getLoginStatus(function(response) {
+	  if (response.session) {
+	    // logged in and connected user, someone you know
+			// rails backend will read the signed_request and make the redirect
+			alert(response.session);
+	  } else {
+	    // no user session available, someone you dont know
+			top.location = "http://www.facebook.com/login.php?v=1.0&api_key=<%= APP_CONFIG['api_key'] %>&display=page&fbconnect=0&canvas=1&req_perms=publish_stream,user_likes" // request login permissions
+			return;
+	  }
+	});
+
+</script>
+
 <h1>dashboard</h1>
 
 <% if @token %>

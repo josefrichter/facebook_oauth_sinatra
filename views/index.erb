@@ -1,3 +1,25 @@
-<h1>facebook stuff</h1>
+<div id="fb-root"></div>
+<script src="http://connect.facebook.net/cs_CZ/all.js"></script>
+<script>
+  // initialize the library with the API key
+  FB.init({ apiKey: "<%= APP_CONFIG['api_key'] %>", cookie: false });
+	FB.Canvas.setAutoResize();
 
-<%= @res %>
+	FB.Event.subscribe('auth.login', function(response) {
+  	window.top.location = "<%= APP_CONFIG['fb_app_url'] %>/dashboard";
+  });
+	
+  // fetch the status on load
+	FB.getLoginStatus(function(response) {
+	  if (response.session) {
+	    // logged in and connected user, someone you know
+	  } else {
+	    // no user session available, someone you dont know
+			top.location = "http://www.facebook.com/login.php?v=1.0&api_key=<%= APP_CONFIG['api_key'] %>&display=page&fbconnect=0&canvas=1&req_perms=publish_stream,user_likes&next=<%= APP_CONFIG['app_url'] %>/setcookie" // request login permissions
+			return;
+	  }
+	});
+	
+
+
+</script>

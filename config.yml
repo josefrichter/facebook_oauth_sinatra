@@ -4,3 +4,4 @@ api_key: 9a8095faa1810863eaef0d2a70a2f514
 user_id: 100001729831260 # Josef Tester fb uid - my test account
 friend_id: 100001697221291 # Karel Tester fb uid - my test account
 app_url: "http://chiba.cz:8080" # my test app url
+fb_app_url: "http://apps.facebook.com/jri-testapp" # my test app url

@@ -9,6 +9,18 @@ enable :sessions
 APP_CONFIG = YAML.load_file("config.yml")
 
 get '/' do
+  
+  if params[:signed_request]
+    #redirect '/dashboard'
+  end
+  erb :index
+end
+
+get '/setcookie' do
+  #debugger
+end
+
+get '/auth' do
 
   # this makes the first call (redirect to facebook). If the user is not logged in, he will be prompted to do so by facebook and asked to grant permissions to your app
   # once logged in, he will be redirected back to this app to the /oauth_redirect path
@@ -39,18 +51,19 @@ get '/oauth_redirect' do
     # from parsing we got beautiful access_token and its expiry. can store that in session
     session["access_token"] = hash["access_token"]
     session["expires"] = hash["expires"]
-    redirect '/dashboard' # now we have token so the fun may begin
+    redirect '/dashboard?token='+CGI.escape(hash["access_token"]) # now we have token so the fun may begin
   end
   
 end
 
 get '/dashboard' do
-  
+  debugger
   @token = session["access_token"] # get the token
   
   # here we can do anything that requires a user's token
   # like get basic info about user
   @me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => session["access_token"]})
+  #@me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => params[:token]})
   
   erb :dashboard
   
@@ -72,7 +85,7 @@ post '/restapi' do
   url="https://api.facebook.com/method/stream.publish"
   @res = HTTParty.get(url, :query => post_params)
 
-  erb :index
+  erb :response
   
 end
 
@@ -85,7 +98,7 @@ post '/graphapi' do
   # url = "https://graph.facebook.com/#{APP_CONFIG['friend_id']}/feed" # publishing to friend's wall
   @res = HTTParty.post(url, :query => post_params) # note you send GET to rest api, but POST to graph api
   
-  erb :index
+  erb :response
 
 end
 
