@@ -1,3 +1,30 @@
 <h1>dashboard</h1>
 
-<%= @token %>
+<% if @token %>
+	<p>You have now successfully authenticated thru the OAuth 2.0 process.</p>
+	<p>Your token is: <%= @token %></p>
+	
+	<h3>about you</h3>
+
+	<table>
+		<% @me.each do |k,v| %>
+			<tr><td><%= k %></td><td><%= v %></td></tr>
+		<% end %>
+	</table>
+	
+	<h3>you can e.g. send messages thru both old rest api and the new graph api</h3>
+	<p>(of course you need stream_publish permissions for that)</p>
+	
+	<form action="/restapi" method="post" accept-charset="utf-8">
+		<label for="message">Message:</label><input type="text" name="message" value="sent thru rest api" id="message">
+		<p><input type="submit" value="Send thru rest api &rarr;"></p>
+	</form>
+	
+	<form action="/graphapi" method="post" accept-charset="utf-8">
+		<label for="message">Message:</label><input type="text" name="message" value="sent thru graph api" id="message">
+		<p><input type="submit" value="Send thru graph api &rarr;"></p>
+	</form>
+	
+<% else %>
+	<p>Not authenticated.</p>
+<% end %>

@@ -1,6 +1,6 @@
 app_id: 111979622193736
 secret: 6d2cd247f49b36b2654c09722764be22
 api_key: 9a8095faa1810863eaef0d2a70a2f514
-user_id: 658037945 # Josef Richter fb uid
-friend_id: 1578183502 # Josef Hovad fb uid
-app_url: "http://chiba.cz:8080"
+user_id: 100001729831260 # Josef Tester fb uid - my test account
+friend_id: 100001697221291 # Karel Tester fb uid - my test account
+app_url: "http://chiba.cz:8080" # my test app url
