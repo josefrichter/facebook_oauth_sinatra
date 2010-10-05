@@ -18,6 +18,8 @@ end
 
 get '/setcookie' do
   #debugger
+  session[:signed_request] = params[:signed_request]
+  redirect APP_CONFIG['fb_app_url']+"/dashboard"
 end
 
 get '/auth' do
@@ -57,12 +59,12 @@ get '/oauth_redirect' do
 end
 
 get '/dashboard' do
-  debugger
-  @token = session["access_token"] # get the token
-  
+  #debugger
+  #@token = session["access_token"] # get the token
+  @signed_request = session[:signed_request]
   # here we can do anything that requires a user's token
   # like get basic info about user
-  @me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => session["access_token"]})
+  #@me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => session["access_token"]})
   #@me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => params[:token]})
   
   erb :dashboard
@@ -100,6 +102,14 @@ post '/graphapi' do
   
   erb :response
 
+end
+
+get '/test' do
+end
+
+get '/please' do
+  @sr = session[:signed_request]
+  erb :please
 end
 
 def app_token
