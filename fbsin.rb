@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'sinatra'
-require 'cgi'
 require 'httparty'
 require 'ruby-debug'
 
@@ -8,21 +7,32 @@ enable :sessions
 
 APP_CONFIG = YAML.load_file("config.yml")
 
+
+#### iframe apps authentication ####
+
 get '/' do
-  
-  if params[:signed_request]
-    #redirect '/dashboard'
-  end
-  erb :index
+  erb :index # javascript will take care
 end
 
 get '/setcookie' do
-  #debugger
-  session[:signed_request] = params[:signed_request]
-  redirect APP_CONFIG['fb_app_url']+"/dashboard"
+  # the best thing about it is that the redirect from facebook to here and back is usually so fast, that the facebook chrome around iframe app doesn't even disappear :-)
+  session[:signed_request] = params[:signed_request] # just save parameter to cookie...
+  redirect APP_CONFIG['fb_app_url']+"/iframe-dashboard" # ...and redirect back to facebook to our app start page (iframe dashboard)
 end
 
-get '/auth' do
+get '/iframe-dashboard' do
+  @signed_request = session[:signed_request] # take it from session cookie !!!
+  erb :iframe_dashboard
+end
+
+get '/another-page' do
+  @signed_request = session[:signed_request]
+  erb :another_page
+end
+
+#### connect apps authentication (without any SDK) ####
+
+get '/connect' do
 
   # this makes the first call (redirect to facebook). If the user is not logged in, he will be prompted to do so by facebook and asked to grant permissions to your app
   # once logged in, he will be redirected back to this app to the /oauth_redirect path
@@ -53,28 +63,30 @@ get '/oauth_redirect' do
     # from parsing we got beautiful access_token and its expiry. can store that in session
     session["access_token"] = hash["access_token"]
     session["expires"] = hash["expires"]
-    redirect '/dashboard?token='+CGI.escape(hash["access_token"]) # now we have token so the fun may begin
+    redirect '/dashboard' # now we have token so the fun may begin
   end
   
 end
 
 get '/dashboard' do
-  #debugger
-  #@token = session["access_token"] # get the token
-  @signed_request = session[:signed_request]
+  @token = session["access_token"] # get the token from cookie
   # here we can do anything that requires a user's token
   # like get basic info about user
-  #@me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => session["access_token"]})
-  #@me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => params[:token]})
+  @me = HTTParty.get("https://graph.facebook.com/me",:query => {:access_token => @token})
   
   erb :dashboard
   
 end
 
+#### connect apps authentication thru JS SDK ####
+
 get '/js' do
   # this one makes use of the JS SDK entirely on client side
   erb :js
 end
+
+
+#### api access methods ####
 
 post '/restapi' do
   
@@ -104,18 +116,11 @@ post '/graphapi' do
 
 end
 
-get '/test' do
-end
-
-get '/please' do
-  @sr = session[:signed_request]
-  erb :please
-end
-
 def app_token
+  # wait, is this really needed for anything?
   
   # we will authenticate as app here
-  # this is generally needed for publishing to facebook
+  # FB says this is generally needed for publishing to facebook
   # described here http://developers.facebook.com/docs/api#publishing and here: http://developers.facebook.com/docs/authentication/#client_credentials
   post_params = {:grant_type => "client_credentials", :client_id => APP_CONFIG['app_id'], :client_secret => APP_CONFIG['secret']}
   url = "https://graph.facebook.com/oauth/access_token"

@@ -15,8 +15,7 @@
 			var body = "Reading Connect JS documentation";
 			FB.api('/<%= APP_CONFIG[\'friend_id\'] %>/feed', 'post', { body: body }, function(response) {
 			  if (!response || response.error) {
-					console.log(response.error);
-			    //alert(response.error);
+					//console.log(response.error);
 			  } else {
 			    alert('Post ID: ' + response);
 			  }

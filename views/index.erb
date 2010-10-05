@@ -1,8 +1,8 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://github.com/allmarkedup/jQuery-URL-Parser/raw/master/jquery.url.js"></script>
+<script type="text/javascript" src="url.js"></script>
 
 <div id="fb-root"></div>
-<script src="http://connect.facebook.net/cs_CZ/all.js"></script>
+<script src="http://connect.facebook.net/en_US/all.js"></script>
 <script>
   
 	console.log("loaded");
@@ -16,7 +16,7 @@
 	FB.getLoginStatus(function(response) {
 	  if (response.session) {
 	    // logged in and connected user, someone you know
-			top.location = "<%= APP_CONFIG['app_url'] %>/setcookie?signed_request="+jQuery.url.param("signed_request");
+			top.location = "<%= APP_CONFIG['app_url'] %>/setcookie?signed_request="+jQuery.url.param("signed_request"); // take the signed request from url and pass it to my app
 	  } else {
 	    // no user session available, someone you dont know
 			top.location = "http://www.facebook.com/login.php?v=1.0&api_key=<%= APP_CONFIG['api_key'] %>&display=page&fbconnect=0&canvas=1&req_perms=publish_stream,user_likes" // request login permissions
