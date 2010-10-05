@@ -5,9 +5,6 @@
 <script src="http://connect.facebook.net/en_US/all.js"></script>
 <script>
   
-	console.log("loaded");
-	console.log(jQuery.url.param("signed_request"));
-
   // initialize the library with the API key
   FB.init({ apiKey: "<%= APP_CONFIG['api_key'] %>", cookie: false });
 	FB.Canvas.setAutoResize();
